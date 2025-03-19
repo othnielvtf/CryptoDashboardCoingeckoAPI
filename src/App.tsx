@@ -1,4 +1,5 @@
 
+
 import LoginPage from './presentation/pages/LoginPage';
 import DashboardPage from './presentation/pages/DashboardPage';
 import { useAuth } from './presentation/hooks/useAuth';
@@ -13,10 +14,16 @@ import { useAuth } from './presentation/hooks/useAuth';
 function App() {
   const { isAuthenticated, logout } = useAuth();
 
-  return isAuthenticated ? (
-    <DashboardPage onLogout={logout} />
-  ) : (
-    <LoginPage onLoginSuccess={() => {}} />
+  console.log('App rendering, isAuthenticated:', isAuthenticated);
+
+  return (
+    <>
+      {isAuthenticated ? (
+        <DashboardPage onLogout={logout} />
+      ) : (
+        <LoginPage onLoginSuccess={() => console.log('Login successful')} />
+      )}
+    </>
   );
 
 

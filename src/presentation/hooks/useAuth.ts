@@ -9,12 +9,24 @@ export const useAuth = () => {
   
   const authService = new AuthService();
   
-  // Initialize auth state
+  // Initialize auth state and listen for changes
   useEffect(() => {
+    // Initial state
     const currentUser = authService.getCurrentUser();
     setUser(currentUser);
     setIsAuthenticated(authService.isAuthenticated());
     setIsLoading(false);
+    
+    // Subscribe to auth state changes
+    const unsubscribe = authService.onAuthStateChange(() => {
+      console.log('Auth state changed, updating hook state');
+      const updatedUser = authService.getCurrentUser();
+      setUser(updatedUser);
+      setIsAuthenticated(authService.isAuthenticated());
+    });
+    
+    // Cleanup subscription
+    return () => unsubscribe();
   }, []);
   
   // Login function
@@ -22,13 +34,14 @@ export const useAuth = () => {
     setIsLoading(true);
     try {
       const user = await authService.login(username, password);
+      console.log('Login successful, updating state');
       setUser(user);
       setIsAuthenticated(true);
+      setIsLoading(false);
       return user;
     } catch (error) {
-      throw error;
-    } finally {
       setIsLoading(false);
+      throw error;
     }
   }, []);
   

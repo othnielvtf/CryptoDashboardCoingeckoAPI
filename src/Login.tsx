@@ -24,9 +24,12 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
     setError('');
     setLoading(true);
 
+    const validUsername = import.meta.env.VITE_VALID_USERNAME;
+    const validPassword = import.meta.env.VITE_VALID_PASSWORD;
+
     // Simulate API call delay
     setTimeout(() => {
-      if (username === 'othniel' && password === 'admin123#') {
+      if (username === validUsername && password === validPassword) {
         // Save to localStorage
         localStorage.setItem('username', username);
         localStorage.setItem('isLoggedIn', 'true');

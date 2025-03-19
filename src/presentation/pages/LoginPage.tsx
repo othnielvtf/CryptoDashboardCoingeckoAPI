@@ -1,25 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
-import { AuthService } from '../../infrastructure/services/AuthService';
+import { useAuth } from '../hooks/useAuth';
 
 interface LoginPageProps {
   onLoginSuccess: () => void;
 }
 
 const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  // Pre-fill credentials in development mode
+  const defaultUsername = import.meta.env.DEV ? import.meta.env.VITE_VALID_USERNAME : '';
+  const [username, setUsername] = useState(defaultUsername);
+  const defaultPassword = import.meta.env.DEV ? import.meta.env.VITE_VALID_PASSWORD : '';
+  const [password, setPassword] = useState(defaultPassword);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   
-  const authService = new AuthService();
+  const { login, isAuthenticated } = useAuth();
 
   // Check if user is already logged in
   useEffect(() => {
-    if (authService.isAuthenticated()) {
+    if (isAuthenticated) {
       onLoginSuccess();
     }
-  }, [onLoginSuccess]);
+  }, [isAuthenticated, onLoginSuccess]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,11 +30,13 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
     setLoading(true);
 
     try {
-      await authService.login(username, password);
-      onLoginSuccess();
+      console.log('Attempting login with:', { username });
+      await login(username, password);
+      console.log('Login successful in component');
+      // The auth state change will trigger the useEffect
     } catch (err) {
+      console.error('Login error:', err);
       setError('Invalid username or password');
-    } finally {
       setLoading(false);
     }
   };
@@ -98,13 +103,6 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
               
         <div className="mt-6 text-center text-sm text-gray-500">
           <p>Use the provided credentials to log in</p>
-          {/* Note: In a development environment, you might want to show the credentials */}
-          {import.meta.env.DEV && (
-            <p className="mt-1">
-              Username: <span className="font-medium">{import.meta.env.VITE_VALID_USERNAME}</span>, 
-              Password: <span className="font-medium">{import.meta.env.VITE_VALID_PASSWORD}</span>
-            </p>
-          )}
         </div>
       </div>
     </div>
