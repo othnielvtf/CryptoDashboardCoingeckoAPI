@@ -11,11 +11,29 @@ export const useAuth = () => {
   
   // Initialize auth state and listen for changes
   useEffect(() => {
-    // Initial state
-    const currentUser = authService.getCurrentUser();
-    setUser(currentUser);
-    setIsAuthenticated(authService.isAuthenticated());
-    setIsLoading(false);
+    // Set loading state while we check authentication
+    setIsLoading(true);
+    
+    // Check if user is authenticated
+    const checkAuth = () => {
+      try {
+        const currentUser = authService.getCurrentUser();
+        const isAuth = authService.isAuthenticated();
+        
+        console.log('Initial auth check:', { currentUser, isAuth });
+        
+        setUser(currentUser);
+        setIsAuthenticated(isAuth);
+      } catch (error) {
+        console.error('Error checking authentication:', error);
+      } finally {
+        // Always set loading to false when done
+        setIsLoading(false);
+      }
+    };
+    
+    // Run initial check
+    checkAuth();
     
     // Subscribe to auth state changes
     const unsubscribe = authService.onAuthStateChange(() => {
@@ -37,11 +55,12 @@ export const useAuth = () => {
       console.log('Login successful, updating state');
       setUser(user);
       setIsAuthenticated(true);
-      setIsLoading(false);
       return user;
     } catch (error) {
-      setIsLoading(false);
+      console.error('Login error:', error);
       throw error;
+    } finally {
+      setIsLoading(false);
     }
   }, []);
   

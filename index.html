@@ -1,10 +1,49 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <!-- Script to set theme before page load to prevent flash -->
+    <script>
+      (function() {
+        try {
+          // First, ensure we start with clean classes
+          document.documentElement.classList.remove('light', 'dark');
+          
+          // Define theme storage key
+          const THEME_STORAGE_KEY = 'app-theme';
+          
+          // Check localStorage first
+          const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+          if (savedTheme && ['light', 'dark'].includes(savedTheme)) {
+            document.documentElement.classList.add(savedTheme);
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            console.log('Theme set from localStorage:', savedTheme);
+            return;
+          }
+          
+          // Check system preference
+          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const systemTheme = prefersDark ? 'dark' : 'light';
+          document.documentElement.classList.add(systemTheme);
+          document.documentElement.setAttribute('data-theme', systemTheme);
+          
+          // Save the system preference to localStorage
+          localStorage.setItem(THEME_STORAGE_KEY, systemTheme);
+          console.log('Theme set from system preference:', systemTheme);
+        } catch (e) {
+          console.error('Error setting initial theme:', e);
+          // Default to light theme if there's an error
+          document.documentElement.classList.add('light');
+        }
+      })();
+    </script>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>My Favourite Crypto</title>
+    <!-- Manrope font from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
   </head>
   <body>
     <div id="root"></div>

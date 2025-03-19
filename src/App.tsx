@@ -2,6 +2,8 @@
 
 import LoginPage from './presentation/pages/LoginPage';
 import DashboardPage from './presentation/pages/DashboardPage';
+import ThemeToggle from './presentation/components/ThemeToggle';
+import { ThemeProvider } from './presentation/contexts/ThemeContext';
 import { useAuth } from './presentation/hooks/useAuth';
 
 /**
@@ -12,18 +14,26 @@ import { useAuth } from './presentation/hooks/useAuth';
  */
 
 function App() {
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, isLoading, logout } = useAuth();
 
-  console.log('App rendering, isAuthenticated:', isAuthenticated);
+  console.log('App rendering, isAuthenticated:', isAuthenticated, 'isLoading:', isLoading);
 
   return (
-    <>
-      {isAuthenticated ? (
-        <DashboardPage onLogout={logout} />
-      ) : (
-        <LoginPage onLoginSuccess={() => console.log('Login successful')} />
-      )}
-    </>
+    <ThemeProvider>
+      <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-200">
+        {isLoading ? (
+          // Show loading state
+          <div className="flex items-center justify-center h-screen">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+          </div>
+        ) : isAuthenticated ? (
+          <DashboardPage onLogout={logout} />
+        ) : (
+          <LoginPage onLoginSuccess={() => console.log('Login successful')} />
+        )}
+        <ThemeToggle />
+      </div>
+    </ThemeProvider>
   );
 
 

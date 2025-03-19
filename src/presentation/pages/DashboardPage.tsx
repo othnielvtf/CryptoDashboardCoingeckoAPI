@@ -44,9 +44,9 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ onLogout }) => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="bg-red-50 p-4 rounded-lg shadow-sm">
-          <p className="text-red-600">{error}</p>
+      <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex items-center justify-center transition-colors duration-200">
+        <div className="bg-red-50 dark:bg-red-900 p-4 rounded-lg shadow-sm">
+          <p className="text-red-600 dark:text-red-300">{error}</p>
           <button
             onClick={fetchCryptoData}
             className="mt-2 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
@@ -59,13 +59,13 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ onLogout }) => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6 md:p-8">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 p-6 md:p-8 transition-colors duration-200">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <div className="flex items-center gap-2">
-            <h1 className="text-3xl font-bold text-gray-900">Crypto Dashboard</h1>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white transition-colors duration-200">Crypto Dashboard</h1>
             {currentUser && (
-              <div className="text-sm text-gray-500 ml-2">
+              <div className="text-sm text-gray-500 dark:text-gray-400 ml-2 transition-colors duration-200">
                 Logged in as <span className="font-medium">{currentUser.username}</span>
               </div>
             )}
@@ -73,7 +73,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ onLogout }) => {
           <div className="flex gap-3">
             <button
               onClick={fetchCryptoData}
-              className="flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow-sm hover:shadow-md transition-all"
+              className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg shadow-sm hover:shadow-md transition-all"
               disabled={loading}
             >
               {loading ? (
@@ -85,7 +85,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ onLogout }) => {
             </button>
             <button
               onClick={handleLogout}
-              className="flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow-sm hover:shadow-md transition-all text-red-600"
+              className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-all text-red-600 dark:text-red-400"
             >
               <LogOut className="w-5 h-5" />
               Logout
@@ -98,10 +98,10 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ onLogout }) => {
             Array(4).fill(0).map((_, index) => (
               <div
                 key={index}
-                className="bg-white rounded-xl p-6 shadow-sm animate-pulse"
+                className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm animate-pulse transition-colors duration-200"
               >
-                <div className="h-8 bg-gray-200 rounded-md mb-4"></div>
-                <div className="h-6 bg-gray-200 rounded-md w-2/3"></div>
+                <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded-md mb-4 transition-colors duration-200"></div>
+                <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded-md w-2/3 transition-colors duration-200"></div>
               </div>
             ))
           ) : (

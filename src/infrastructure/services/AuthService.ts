@@ -22,10 +22,35 @@ export class AuthService implements IAuthService {
   
   // Custom event for auth state changes
   private readonly AUTH_STATE_CHANGE_EVENT = 'auth-state-change';
+  private readonly SESSION_STORAGE_KEY = 'auth_session';
 
   // Dispatch auth state change event
   private dispatchAuthStateChange() {
     window.dispatchEvent(new CustomEvent(this.AUTH_STATE_CHANGE_EVENT));
+  }
+  
+  // Save session state to sessionStorage (persists across page refreshes but not tabs/windows)
+  private saveSessionState(user: UserModel) {
+    sessionStorage.setItem(this.SESSION_STORAGE_KEY, JSON.stringify(user));
+  }
+  
+  // Clear session state
+  private clearSessionState() {
+    sessionStorage.removeItem(this.SESSION_STORAGE_KEY);
+  }
+  
+  // Get session state
+  private getSessionState(): UserModel | null {
+    const sessionData = sessionStorage.getItem(this.SESSION_STORAGE_KEY);
+    if (sessionData) {
+      try {
+        return JSON.parse(sessionData) as UserModel;
+      } catch (e) {
+        console.error('Failed to parse session data:', e);
+        return null;
+      }
+    }
+    return null;
   }
 
   // Subscribe to auth state changes
@@ -50,9 +75,12 @@ export class AuthService implements IAuthService {
             isLoggedIn: true
           };
           
-          // Save to localStorage
+          // Save to localStorage for long-term persistence
           localStorage.setItem(this.STORAGE_KEY_USERNAME, username);
           localStorage.setItem(this.STORAGE_KEY_IS_LOGGED_IN, 'true');
+          
+          // Save to sessionStorage for session persistence
+          this.saveSessionState(user);
           
           // Notify subscribers about auth state change
           this.dispatchAuthStateChange();
@@ -66,28 +94,50 @@ export class AuthService implements IAuthService {
   }
   
   logout(): void {
+    // Clear localStorage
     localStorage.removeItem(this.STORAGE_KEY_USERNAME);
     localStorage.removeItem(this.STORAGE_KEY_IS_LOGGED_IN);
+    
+    // Clear sessionStorage
+    this.clearSessionState();
     
     // Notify subscribers about auth state change
     this.dispatchAuthStateChange();
   }
   
   getCurrentUser(): UserModel | null {
+    // First try to get from session storage (for current tab persistence)
+    const sessionUser = this.getSessionState();
+    if (sessionUser) {
+      return sessionUser;
+    }
+    
+    // Fall back to localStorage (for cross-tab persistence)
     const username = localStorage.getItem(this.STORAGE_KEY_USERNAME);
     const isLoggedIn = localStorage.getItem(this.STORAGE_KEY_IS_LOGGED_IN) === 'true';
     
     if (username && isLoggedIn) {
-      return {
+      const user = {
         username,
         isLoggedIn
       };
+      
+      // Update session storage for future use
+      this.saveSessionState(user);
+      
+      return user;
     }
     
     return null;
   }
   
   isAuthenticated(): boolean {
+    // First check session storage
+    if (this.getSessionState()?.isLoggedIn) {
+      return true;
+    }
+    
+    // Then check localStorage
     return localStorage.getItem(this.STORAGE_KEY_IS_LOGGED_IN) === 'true';
   }
 }

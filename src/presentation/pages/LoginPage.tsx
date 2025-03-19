@@ -20,9 +20,15 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
   // Check if user is already logged in
   useEffect(() => {
     if (isAuthenticated) {
+      console.log('User is already authenticated, calling onLoginSuccess');
       onLoginSuccess();
     }
   }, [isAuthenticated, onLoginSuccess]);
+  
+  // Log authentication state changes
+  useEffect(() => {
+    console.log('LoginPage auth state changed:', { isAuthenticated, loading });
+  }, [isAuthenticated, loading]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,9 +48,9 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl shadow-md p-8 w-full max-w-md">
-        <h1 className="text-2xl font-bold text-center text-gray-900 mb-6">Crypto Dashboard Login</h1>
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex items-center justify-center p-4 transition-colors duration-200">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-8 w-full max-w-md transition-colors duration-200">
+        <h1 className="text-2xl font-bold text-center text-gray-900 dark:text-white mb-6 transition-colors duration-200">Crypto Dashboard Login</h1>
         
         {error && (
           <div className="bg-red-50 text-red-600 p-3 rounded-md mb-4">
@@ -54,7 +60,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-200">
               Username
             </label>
             <input
@@ -62,14 +68,14 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200"
               placeholder="Enter your username"
               required
             />
           </div>
           
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-200">
               Password
             </label>
             <input
@@ -77,7 +83,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200"
               placeholder="Enter your password"
               required
             />
@@ -87,7 +93,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-70 flex items-center justify-center"
+              className="w-full bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-70 flex items-center justify-center"
             >
               {loading ? (
                 <>
@@ -101,7 +107,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
           </div>
         </form>
               
-        <div className="mt-6 text-center text-sm text-gray-500">
+        <div className="mt-6 text-center text-sm text-gray-500 dark:text-gray-400 transition-colors duration-200">
           <p>Use the provided credentials to log in</p>
         </div>
       </div>
